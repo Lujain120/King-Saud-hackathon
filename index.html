@@ -34,7 +34,11 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
+<<<<<<< HEAD
     const serviceWorkerVersion = "1554302790";
+=======
+    const serviceWorkerVersion = "311477040";
+>>>>>>> parent of eb621ab (Update index.html with correct Flutter initialization)
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
@@ -93,6 +97,7 @@
 
   <script>
     window.addEventListener('load', function() {
+<<<<<<< HEAD
       var loadingElement = document.querySelector('#loading');
       var scriptLoaded = false;
       
@@ -136,6 +141,23 @@
           loadingElement.innerHTML = '<div class="loading-content"><p class="loading-text">Taking too long to load. Please check your connection and try again.</p></div>';
         }
       }, 10000);
+=======
+      // Initialize Flutter
+      if (typeof flutter === 'undefined') {
+        console.error('Flutter not loaded');
+        return;
+      }
+
+      flutter.loader.load({
+        serviceWorker: { serviceWorkerVersion: serviceWorkerVersion }
+      }).then(function(engineInitializer) {
+        return engineInitializer.initializeEngine();
+      }).then(function(appRunner) {
+        return appRunner.runApp();
+      }).catch(function(error) {
+        console.error('Error initializing Flutter:', error);
+      });
+>>>>>>> parent of eb621ab (Update index.html with correct Flutter initialization)
     });
   </script>
 </body>
