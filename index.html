@@ -93,21 +93,49 @@
 
   <script>
     window.addEventListener('load', function() {
-      // Initialize Flutter
-      if (typeof flutter === 'undefined') {
-        console.error('Flutter not loaded');
-        return;
+      var loadingElement = document.querySelector('#loading');
+      var scriptLoaded = false;
+      
+      // Dynamically set the base path for Flutter
+      var baseHref = document.querySelector('base').getAttribute('href') || '/';
+      
+      // Initialize Flutter with proper error handling
+      try {
+        if (typeof _flutter === 'undefined') {
+          console.error('Flutter framework not loaded');
+          loadingElement.innerHTML = '<div class="loading-content"><p class="loading-text">Failed to load Flutter. Please try refreshing the page.</p></div>';
+          return;
+        }
+        
+        _flutter.loader.load({
+          serviceWorkerSettings: {
+            serviceWorkerVersion: serviceWorkerVersion,
+          },
+        }).then(function(engineInitializer) {
+          scriptLoaded = true;
+          return engineInitializer.initializeEngine();
+        }).then(function(appRunner) {
+          return appRunner.runApp();
+        }).then(function() {
+          // Hide loading indicator when app is ready
+          if (loadingElement) {
+            loadingElement.style.display = 'none';
+          }
+        }).catch(function(error) {
+          console.error('Error initializing Flutter:', error);
+          loadingElement.innerHTML = '<div class="loading-content"><p class="loading-text">Failed to initialize Flutter. Please try refreshing the page.</p></div>';
+        });
+      } catch (e) {
+        console.error('Exception during Flutter initialization:', e);
+        loadingElement.innerHTML = '<div class="loading-content"><p class="loading-text">Error loading application. Please try refreshing the page.</p></div>';
       }
-
-      flutter.loader.load({
-        serviceWorker: { serviceWorkerVersion: serviceWorkerVersion }
-      }).then(function(engineInitializer) {
-        return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
-        return appRunner.runApp();
-      }).catch(function(error) {
-        console.error('Error initializing Flutter:', error);
-      });
+      
+      // Show error if script is not loaded after 10 seconds
+      setTimeout(function() {
+        if (!scriptLoaded && loadingElement) {
+          loadingElement.innerHTML = '<div class="loading-content"><p class="loading-text">Taking too long to load. Please check your connection and try again.</p></div>';
+        }
+      }, 10000);
     });
   </script>
 </body>
