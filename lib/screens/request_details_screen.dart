@@ -342,6 +342,7 @@ class _RequestDetailsScreenState extends State<RequestDetailsScreen> {
                     _buildInfoRow('البريد الإلكتروني:', widget.request['email']),
                     _buildInfoRow('رقم الهاتف:', widget.request['phone']),
                     _buildInfoRow('تاريخ الطلب:', widget.request['date']),
+                    _buildInfoRow('رقم الترخيص:', widget.request['licenseNumber'] ?? '-'),
                     const SizedBox(height: 16),
                     const Text(
                       'تفاصيل إضافية:',

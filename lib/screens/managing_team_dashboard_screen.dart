@@ -31,7 +31,8 @@ class _ManagingTeamDashboardScreenState extends State<ManagingTeamDashboardScree
       "phone": "0501234567",
       "date": "2025-05-15",
       "id": "REQ-001",
-      "status": "جديد"
+      "status": "جديد",
+      "licenseNumber": "1234567890"
     },
     {
       "clientName": "ريم الحربي",
@@ -41,7 +42,8 @@ class _ManagingTeamDashboardScreenState extends State<ManagingTeamDashboardScree
       "phone": "0509876543",
       "date": "2025-05-18",
       "id": "REQ-002",
-      "status": "قيد التنفيذ"
+      "status": "قيد التنفيذ",
+      "licenseNumber": "9876543210"
     },
     {
       "clientName": "فهد القحطاني",
@@ -51,7 +53,8 @@ class _ManagingTeamDashboardScreenState extends State<ManagingTeamDashboardScree
       "phone": "0507654321",
       "date": "2025-05-20",
       "id": "REQ-003",
-      "status": "جاهز للتنفيذ"
+      "status": "جاهز للتنفيذ",
+      "licenseNumber": "1122334455"
     }
   ];
 
@@ -665,6 +668,7 @@ class _ManagingTeamDashboardScreenState extends State<ManagingTeamDashboardScree
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CircleAvatar(
                 radius: 20,
@@ -718,16 +722,37 @@ class _ManagingTeamDashboardScreenState extends State<ManagingTeamDashboardScree
             ],
           ),
           const SizedBox(height: 16),
-          Row(
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
             children: [
-              Icon(Icons.business, size: 20, color: Colors.grey[600]),
-              const SizedBox(width: 8),
-              Text(
-                request['requestedService'],
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF1E1E1E),
-                ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.business, size: 20, color: Colors.grey[600]),
+                  const SizedBox(width: 4),
+                  Text(
+                    request['requestedService'],
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFF1E1E1E),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.confirmation_number, size: 20, color: Colors.grey[600]),
+                  const SizedBox(width: 4),
+                  Text(
+                    'رقم الترخيص: ${request['licenseNumber'] ?? '-'}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF1E1E1E),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -754,21 +779,24 @@ class _ManagingTeamDashboardScreenState extends State<ManagingTeamDashboardScree
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RequestDetailsScreen(request: request),
-                    ),
-                  );
-                },
+                onPressed: request['status'] == 'جديد'
+                    ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RequestDetailsScreen(request: request),
+                          ),
+                        );
+                      }
+                    : null,
                 style: TextButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  foregroundColor: request['status'] == 'جديد' ? const Color(0xFF5F218E) : Colors.grey,
                 ),
-                child: const Text(
+                child: Text(
                   'تفاصيل الطلب',
                   style: TextStyle(
-                    color: Color(0xFF5F218E),
+                    color: request['status'] == 'جديد' ? const Color(0xFF5F218E) : Colors.grey,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
