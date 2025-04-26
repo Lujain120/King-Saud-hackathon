@@ -92,25 +92,47 @@
   </div>
 
   <script>
-    window.addEventListener('load', function(ev) {
+    window.addEventListener('load', function() {
       var loading = document.querySelector('#loading');
       
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
+      // Initialize Flutter
+      var scriptLoaded = false;
+      var engineInitialized = false;
+      
+      function initFlutter() {
+        if (!scriptLoaded || !engineInitialized) return;
+        
+        window.flutter_web_sdk = window.flutter_web_sdk || {};
+        var flutter = window.flutter_web_sdk;
+        
+        flutter.loader.loadEntrypoint({
+          serviceWorker: {
+            serviceWorkerVersion: serviceWorkerVersion,
+          },
+          onEntrypointLoaded: async function(engineInitializer) {
+            let appRunner = await engineInitializer.initializeEngine();
+            await appRunner.runApp();
             
             // Remove loading indicator
             if (loading) {
               loading.remove();
             }
-          });
-        }
-      });
+          }
+        });
+      }
+      
+      // Wait for Flutter.js to be loaded
+      if (window.flutter_web_sdk) {
+        scriptLoaded = true;
+        engineInitialized = true;
+        initFlutter();
+      } else {
+        window.addEventListener('flutter-first-frame', function() {
+          scriptLoaded = true;
+          engineInitialized = true;
+          initFlutter();
+        });
+      }
     });
   </script>
 </body>
